@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sys
 from PyQt4 import QtCore, QtGui, uic
 from embed import embedWindowClass

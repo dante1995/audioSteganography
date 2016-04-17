@@ -6,6 +6,7 @@ import numpy as np
 import wave
 import scipy.io.wavfile
 import random
+import hashlib
 
 form_class_extract = uic.loadUiType("extract.ui")[0]
 
@@ -20,41 +21,53 @@ class extractWindowClass(QtGui.QMainWindow, form_class_extract):
 
 	def extractData(self, seedVal, inputFile, outputFile):
 		rate1, data = scipy.io.wavfile.read(inputFile)
-		seedVal = int(seedVal)
+		# seedVal = int(seedVal)
+		print "seedVal"
+		print seedVal
+		m = hashlib.sha256(seedVal)
+		seedVal = m.hexdigest()
+		print "hex" + str(seedVal)
+		seedVal = int(seedVal,16)
+		print "int" + str(seedVal)
 		random.seed(seedVal)
 		permutation = []
 		
 		binaryMessage = []
 		lengthBinary = ""
 		
-		for i in range(8):
-			perm = random.randint(25,len(data))
-			if(perm not in permutation and data[perm] != ''):
-				permutation.append(perm)
-			else:
-				i -= 1
+		try:
+			for i in range(8):
+				perm = random.randint(25,len(data))
+				if(perm not in permutation and data[perm] != ''):
+					permutation.append(perm)
+				else:
+					i -= 1
 
-		for i in range(8):
-			lengthBinary += str(data[permutation[i]]%2)
-		
-		length = int(lengthBinary,2)
-		print length
+			for i in range(8):
+				lengthBinary += str(data[permutation[i]]%2)
+			
+			length = int(lengthBinary,2)
+			print length
 
-		for i in range(length*8):
-			perm = random.randint(25,len(data))
-			if(perm not in permutation and data[perm] != ''):
-				permutation.append(perm)
-			else:
-				i -=1
+			for i in range(length*8):
+				perm = random.randint(25,len(data))
+				if(perm not in permutation and data[perm] != ''):
+					permutation.append(perm)
+				else:
+					i -=1
 
-		outputMessage = ""
-		for i in range(1,length+1):
-			character = ''
-			characterBinary = ""
-			for j in range(8):
-				characterBinary += str(data[permutation[8*i+j]]%2)
-			character = chr(int(characterBinary,2))	
-			outputMessage += character
+			outputMessage = ""
+			for i in range(1,length+1):
+				character = ''
+				characterBinary = ""
+				for j in range(8):
+					characterBinary += str(data[permutation[8*i+j]]%2)
+				character = chr(int(characterBinary,2))	
+				outputMessage += character
+		except:
+			notification = "Wrong key entered!!" 
+			self.popupLabel.setAlignment(QtCore.Qt.AlignCenter)
+			self.popupLabel.setText(notification)	
 		
 		outputFile = outputFile+".txt"
 		f = open(outputFile,"w")
@@ -81,8 +94,8 @@ class extractWindowClass(QtGui.QMainWindow, form_class_extract):
 	def btnExitClicked(self):
 		self.close()
 
-# app = QtGui.QApplication(sys.argv)
-# w = QtGui.QWidget()		
+app = QtGui.QApplication(sys.argv)
+w = QtGui.QWidget()		
 # extractWindow = extractWindowClass()
 # extractWindow.show()
 # app.exec_()
