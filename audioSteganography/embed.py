@@ -11,6 +11,8 @@ import Image
 import itertools
 import os
 
+
+
 form_class_embed = uic.loadUiType("embed.ui")[0]
 
 
@@ -199,7 +201,7 @@ class embedWindowClass(QtGui.QMainWindow, form_class_embed):
 		self.inputFileName = self.inputFileName[len(self.inputFileName)-1]
 		print self.inputFileName
 
-		if(self.inputFileName in self.audioFileExtensions):
+		if(self.inputFileName in self.imageFileExtensions):
 			self.fileType = "image"
 
 		print self.fileType	
